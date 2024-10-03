@@ -20,7 +20,7 @@ cursor.execute("INSERT INTO users (name, age) VALUES ('John Doe', 30)")
 cursor.execute("INSERT INTO users (name, age) VALUES ('Jane Smith', 25)")
 conn.commit()  # 변경 사항 저장
 
-# 데이터 조회
+# 데이터 조회?
 cursor.execute("SELECT * FROM users")
 rows = cursor.fetchall()
 
