@@ -1,6 +1,6 @@
 import sqlite3
 
-# 데이터베이스 연결 (없으면 새로 생성)
+# 데이터베이스 연결 (없으면 새로 생성?)
 conn = sqlite3.connect('example.db')
 
 # 커서 생성
