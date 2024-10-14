@@ -2,12 +2,67 @@ import requests
 import pandas as pd
 import re
 import datetime
-from .compute import *
-from .config import HEADERS  # 설정 파일에서 헤더 정보를 가져옵니다.
-from tenacity import retry, stop_after_attempt, wait_fixed  # 재시도 라이브러리
-
+from .config import HEADERS
+from tenacity import retry, stop_after_attempt, wait_fixed
 
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(2))
+def retrieve_stock_data(symbol, start_date=None, end_date=None):
+    """
+    네이버 API를 통해 주식 데이터를 가져오는 내부 함수입니다.
+    Internal function to fetch stock data from Naver API.
+
+    Parameters:
+        symbol (str): 종목 코드 또는 티커입니다.
+                      Stock code or ticker.
+        start_date (str, optional): 시작 날짜입니다. 형식은 'YYYYMMDD'입니다.
+                                    Start date in 'YYYYMMDD' format. Defaults to today.
+        end_date (str, optional): 종료 날짜입니다. 형식은 'YYYYMMDD'입니다.
+                                  End date in 'YYYYMMDD' format. Defaults to 30 days ago.
+
+    Returns:
+        pandas.DataFrame: 주식 데이터가 담긴 데이터프레임입니다.
+                          DataFrame containing stock data.
+
+    Raises:
+        Exception: 통신 오류나 데이터 파싱 오류가 발생한 경우 예외를 발생시킵니다.
+                   Raises an exception if a communication error or data parsing error occurs.
+    """
+    try:
+        # 시작 날짜와 종료 날짜 기본값 설정
+        if end_date is None:
+            end_date = datetime.date.today().strftime("%Y%m%d")
+        if start_date is None:
+            start_date = (datetime.date.today() - datetime.timedelta(days=30)).strftime("%Y%m%d")
+
+        # URL 생성
+        if re.match(r'^\d{6}$', symbol):
+            url = f"https://api.stock.naver.com/chart/domestic/item/{symbol}/day?startDateTime={start_date}0000&endDateTime={end_date}0000"
+        else:
+            url = f"https://api.stock.naver.com/chart/foreign/item/{symbol}/day?startDateTime={start_date}0000&endDateTime={end_date}0000"
+
+        # 요청 보내기
+        response = requests.get(url, headers=HEADERS)
+        response.raise_for_status()
+
+        # 데이터 파싱
+        data = response.json()
+        dataframe = pd.DataFrame(data)
+
+        # 날짜 형식 변환 및 정렬
+        dataframe['localDateTime'] = pd.to_datetime(dataframe['localDateTime'], format='%Y-%m-%dT%H:%M:%S')
+        dataframe.sort_values('localDateTime', inplace=True)
+        dataframe.reset_index(drop=True, inplace=True)
+
+        return dataframe
+
+    except requests.exceptions.RequestException as e:
+        error_message = f"Communication error occurred: {e} (통신 오류가 발생했습니다: {e})"
+        raise Exception(error_message)
+    except ValueError as e:
+        error_message = f"Error parsing data: {e} (데이터를 파싱하는 중 오류가 발생했습니다: {e})"
+        raise Exception(error_message)
+
+
 def get_stock_data_by_date_range(symbol, start_date, end_date, moving_avg_periods=None):
     """
     네이버 API를 이용하여 종목별, 기간별 데이터를 추출하고 이동평균선을 계산하는 함수입니다.
