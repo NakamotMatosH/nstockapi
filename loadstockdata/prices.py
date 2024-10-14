@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 import re
 import datetime
-import .compute 
+from .compute import compute_rsi, compute_moving_average 
 from tenacity import retry, stop_after_attempt, wait_fixed
 
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(2))
