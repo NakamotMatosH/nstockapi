@@ -2,7 +2,7 @@ import requests
 import json
 import pandas as pd
 
-def get_nasdaq_data(stock_code=None):
+def get_nasdaq_list(stock_code=None):
     """
     나스닥 데이터를 가져오는 함수입니다.
     Fetches NASDAQ data.
