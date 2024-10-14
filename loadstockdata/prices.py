@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 import re
 import datetime
-from .config import HEADERS
+
 from tenacity import retry, stop_after_attempt, wait_fixed
 
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(2))
@@ -41,7 +41,7 @@ def retrieve_stock_data(symbol, start_date=None, end_date=None):
             url = f"https://api.stock.naver.com/chart/foreign/item/{symbol}/day?startDateTime={start_date}0000&endDateTime={end_date}0000"
 
         # 요청 보내기
-        response = requests.get(url, headers=HEADERS)
+        response = requests.get(url)
         response.raise_for_status()
 
         # 데이터 파싱
