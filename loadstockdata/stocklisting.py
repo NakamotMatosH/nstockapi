@@ -1,6 +1,7 @@
 import requests
 import json
 import pandas as pd
+from .config import HEADERS
 
 def get_nasdaq_list(stock_code=None):
     """
@@ -21,25 +22,7 @@ def get_nasdaq_list(stock_code=None):
     """
     # 요청 헤더 설정
     # Set request headers
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-                      " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
-        "authority": "api.nasdaq.com",
-        "accept": "application/json, text/plain, */*",
-        "accept-encoding": "gzip, deflate, br, zstd",
-        "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7,pl;q=0.6",
-        "dnt": "1",
-        "origin": "https://www.nasdaq.com",
-        "priority": "u=1, i",
-        "referer": "https://www.nasdaq.com/",
-        "sec-ch-ua": "\"Google Chrome\";v=\"125\", \"Chromium\";v=\"125\", \"Not.A/Brand\";v=\"24\"",
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": "\"Windows\"",
-        "sec-fetch-dest": "empty",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-site": "same-site"
-    }
-
+    headers = HEADERS
     # API 엔드포인트
     # API endpoint
     url = "https://api.nasdaq.com/api/screener/stocks?tableonly=true&limit=0&offset=0&download=true"
