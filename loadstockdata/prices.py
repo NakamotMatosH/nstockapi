@@ -4,7 +4,10 @@ import re
 import datetime
 from .compute import *
 from .config import HEADERS  # 설정 파일에서 헤더 정보를 가져옵니다.
+from tenacity import retry, stop_after_attempt, wait_fixed  # 재시도 라이브러리
 
+
+@retry(stop=stop_after_attempt(3), wait=wait_fixed(2))
 def retrieve_stock_data(symbol, start_date, end_date):
     """
     네이버 API를 통해 주식 데이터를 가져오는 내부 함수입니다.
