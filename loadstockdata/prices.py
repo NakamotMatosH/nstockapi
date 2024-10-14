@@ -49,8 +49,8 @@ def retrieve_stock_data(symbol, start_date=None, end_date=None):
         dataframe = pd.DataFrame(data)
 
         # 날짜 형식 변환 및 정렬
-        dataframe['localDateTime'] = pd.to_datetime(dataframe['localDateTime'], format='%Y-%m-%dT%H:%M:%S')
-        dataframe.sort_values('localDateTime', inplace=True)
+        
+        dataframe.sort_values('localDate', inplace=True)
         dataframe.reset_index(drop=True, inplace=True)
 
         return dataframe
