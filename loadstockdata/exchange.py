@@ -1,3 +1,14 @@
+# 이 코드는 네이버 API와 yfinance를 사용하여 USD to KRW 환율 데이터를 결합한 뒤, 특정 기간 동안의 데이터를 조회할 수 있도록 설계되었습니다.
+# 네이버 API는 최근 3개월치 데이터를 제공하지만, yfinance는 긴 기간의 데이터를 제공할 수 있으나 최근 몇 일간의 데이터는 누락될 수 있습니다.
+# 따라서 이 코드는 두 소스의 데이터를 결합하여 최신 환율 데이터를 보완하고, 중복된 날짜의 경우 네이버 데이터를 우선적으로 사용합니다.
+# 결측된 날짜의 환율 값은 선형 보간법을 사용하여 스무딩 처리하였으며, 최종 결과는 지정된 날짜 범위에 맞는 데이터프레임 형태로 반환됩니다.
+# This code is designed to combine USD to KRW exchange rate data from Naver API and yfinance, allowing users to query data for a specified period.
+# The Naver API provides data for the past 3 months, while yfinance can provide data for longer periods but may lack data for recent days.
+# Therefore, this code combines data from both sources to complement the latest exchange rate data, prioritizing Naver data for overlapping dates.
+# Missing exchange rate values are smoothed using linear interpolation, and the final result is returned as a DataFrame for the specified date range.
+
+
+
 import requests
 import json
 import pandas as pd
