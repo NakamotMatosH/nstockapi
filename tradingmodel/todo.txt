@@ -1,0 +1,3 @@
+# signal finder
+# 전략모델
+# virtual test (해당 전략으로 과거 매매 결과 테스트)
