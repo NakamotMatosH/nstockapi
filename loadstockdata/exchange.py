@@ -82,5 +82,5 @@ def get_usd_to_krw_dataframe():
 
 # 예시 사용법
 # Example usage
-df_exchange_rate = get_usd_to_krw_dataframe()
-print(df_exchange_rate)
+#df_exchange_rate = get_usd_to_krw_dataframe()
+#print(df_exchange_rate)
