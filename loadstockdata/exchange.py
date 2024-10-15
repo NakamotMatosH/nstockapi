@@ -3,6 +3,7 @@ import json
 import pandas as pd
 import numpy as np
 from scipy.interpolate import interp1d
+import yfinance as yf
 
 def fetch_usd_to_krw_data():
     """
@@ -66,21 +67,72 @@ def create_exchange_rate_dataframe(data):
         missing_idx = df[column].index[df[column].isna()]
         df.loc[missing_idx, column] = interp_func(missing_idx.astype(np.int64))
 
+    # localDate 컬럼 추가 (YYYYMMDD 형식)
+    # Add localDate column with YYYYMMDD format
+    df['localDate'] = df.index.strftime('%Y%m%d')
+
     return df
 
-# 데이터를 가져와 데이터프레임을 생성하는 메인 함수
-# Main function to fetch data and create DataFrame
-def get_usd_to_krw_dataframe():
-    try:
-        data = fetch_usd_to_krw_data()
-        df = create_exchange_rate_dataframe(data)
-        return df
-    except requests.exceptions.RequestException as e:
-        print(f"데이터를 가져오는 중 오류 발생: {e}\nError fetching data: {e}")
-    except Exception as e:
-        print(f"데이터 처리 중 오류 발생: {e}\nError processing data: {e}")
+def combine_exchange_rate_data(start_date, end_date):
+    """
+    네이버 API와 yfinance에서 가져온 환율 데이터를 결합하고, 조회 기간에 맞춰 데이터를 반환합니다.
+    Combines exchange rate data from Naver API and yfinance, then returns the data for the specified date range.
+
+    Parameters:
+        start_date (str): 시작 날짜 ('YYYYMMDD' 형식).
+                          Start date in 'YYYYMMDD' format.
+        end_date (str): 종료 날짜 ('YYYYMMDD' 형식).
+                        End date in 'YYYYMMDD' format.
+
+    Returns:
+        pd.DataFrame: 결합된 환율 데이터가 포함된 데이터프레임.
+                      DataFrame containing combined exchange rate data.
+    """
+    # 네이버 API 데이터 가져오기
+    # Fetch data from Naver API
+    data = fetch_usd_to_krw_data()
+    naver_df = create_exchange_rate_dataframe(data)
+    naver_df.rename(columns={'closePrice': 'Close', 'highPrice': 'High', 'lowPrice': 'Low'}, inplace=True)
+    naver_df['Open'] = naver_df['Close']  # Open 값을 Close로 설정
+    naver_df = naver_df[['Open', 'High', 'Low', 'Close', 'localDate']]
+
+    # yfinance 데이터 가져오기
+    # Fetch data from yfinance
+    start_dt = pd.to_datetime(start_date, format='%Y%m%d')
+    end_dt = pd.to_datetime(end_date, format='%Y%m%d')
+    yf_df = yf.download("USDKRW=X", start=start_dt, end=end_dt)
+    yf_df = yf_df[['Open', 'High', 'Low', 'Close']]
+
+    # 날짜 인덱스 설정
+    # Set Date as index
+    yf_df.index = pd.to_datetime(yf_df.index)
+    naver_df.index = pd.to_datetime(naver_df.index)
+
+    # yfinance 데이터와 네이버 데이터 결합
+    # Combine yfinance and Naver data
+    combined_df = pd.concat([yf_df, naver_df]).sort_index()
+
+    # 중복된 날짜가 있을 경우 네이버 데이터를 우선 사용
+    # Prioritize Naver data in case of overlapping dates
+    combined_df = combined_df[~combined_df.index.duplicated(keep='last')]
+
+    # 누락된 값 보간 (선형 보간법 사용)
+    # Interpolate missing values using linear interpolation
+    combined_df = combined_df.interpolate(method='linear')
+
+    # 조회 기간에 맞게 필터링
+    # Filter by the specified date range
+    combined_df = combined_df[(combined_df.index >= start_dt) & (combined_df.index <= end_dt)]
+
+    # localDate 컬럼 추가 (YYYYMMDD 형식)
+    # Add localDate column with YYYYMMDD format
+    combined_df['localDate'] = combined_df.index.strftime('%Y%m%d')
+
+    return combined_df
 
 # 예시 사용법
 # Example usage
-#df_exchange_rate = get_usd_to_krw_dataframe()
-#print(df_exchange_rate)
+#start_date = "20231014"
+#end_date = "20241015"
+#df_combined_exchange_rate = combine_exchange_rate_data(start_date, end_date)
+#df_combined_exchange_rate
