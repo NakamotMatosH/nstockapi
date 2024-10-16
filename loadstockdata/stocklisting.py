@@ -36,8 +36,8 @@ def get_kospi_decliners_today():
 
 def get_nasdaq_decliners_today():
     """
-    네이버 API를 이용하여 오늘의 KOSPI 하락 종목 상위 100개를 가져옵니다.
-    Retrieves the top 100 declining KOSPI stocks for today using the Naver API.
+    네이버 API를 이용하여 오늘의 NASDAQ 하락 종목 상위 100개를 가져옵니다.
+    Retrieves the top 100 declining NASDAQ stocks for today using the Naver API.
     
     Returns:
         pd.DataFrame: 하락 종목 리스트가 담긴 pandas 데이터프레임.
