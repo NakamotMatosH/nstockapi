@@ -129,7 +129,9 @@ def combine_exchange_rate_data(start_date, end_date):
 
     # 누락된 값 보간 (선형 보간법 사용)
     # Interpolate missing values using linear interpolation
-    combined_df = combined_df.interpolate(method='linear')
+    combined_df = combined_df.infer_objects(copy=False)  # 객체 타입을 적절한 타입으로 변환
+    combined_df = combined_df.interpolate(method='linear', axis=0)  # 보간 실행
+    #combined_df = combined_df.interpolate(method='linear')  # future warning (앞으로 object는 취급 안할수도 있음) 대응으로 위의 코드로 수정
 
     # 조회 기간에 맞게 필터링
     # Filter by the specified date range
