@@ -3,6 +3,35 @@ import json
 import pandas as pd
 from .config import HEADERS
 
+def get_kospi_decliners_today():
+    """
+    네이버 API를 이용하여 오늘의 KOSPI 하락 종목 상위 100개를 가져옵니다.
+    Retrieves the top 100 declining KOSPI stocks for today using the Naver API.
+    
+    Returns:
+        pd.DataFrame: 하락 종목 리스트가 담긴 pandas 데이터프레임.
+                      A pandas DataFrame containing the list of declining stocks.
+    """
+    # 네이버 API 요청 URL
+    # URL to request data from the Naver API
+    url = 'https://m.stock.naver.com/api/stocks/down/KOSPI?page=1&pageSize=100'
+    
+    # API 요청 및 응답 데이터 로드
+    # Request data from the API and load the JSON response
+    response = requests.get(url)
+    json_data = json.loads(response.content)
+    
+    # 'stocks' 키에 있는 하락 종목 데이터를 데이터프레임으로 변환
+    # Convert the 'stocks' data to a pandas DataFrame
+    df = pd.DataFrame(json_data['stocks'])
+    
+    return df
+
+# 함수 호출 예시
+# Example function call
+# df_kospi_decliners = get_kospi_decliners_today()
+# print(df_kospi_decliners.head())
+
 def get_nasdaq_list(stock_code=None):
     """
     나스닥 데이터를 가져오는 함수입니다.
