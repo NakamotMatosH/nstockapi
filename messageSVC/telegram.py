@@ -35,9 +35,9 @@ def send_message_telegram(token, chat_id, text):
 
 # 예시 사용법
 # Example usage
-token = 'xxxxxx'  # 가상 텔레그램 토큰
-chat_id = 'yyyyy'  # 가상 채널 ID
-text = '안녕하세요'  # 전송할 메시지
+# token = 'xxxxxx'  # 가상 텔레그램 토큰
+# chat_id = 'yyyyy'  # 가상 채널 ID
+# text = '안녕하세요'  # 전송할 메시지
 
-response = send_message_telegram(token, chat_id, text)
-print(response.json())
+# response = send_message_telegram(token, chat_id, text)
+# print(response.json())
