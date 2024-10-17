@@ -1,5 +1,7 @@
 import requests
 
+#참고한 문서 :https://blog.bizspring.co.kr/%ED%85%8C%ED%81%AC/telegram-bot-api-system-monitoring/
+
 def send_message_telegram(token, chat_id, text):
     """
     특정 채널(chat_id 기준)에 메시지를 보내는 함수입니다.
