@@ -1,0 +1,3 @@
+prices.py
+ retrive_stock... >> usdprice = T/F 옵션으로 (디폴트 False)  True일경우 ClosePrice를 해당기간 USD기준으로 변환해서 처리 (단 ,KRX 대상인경우만 해당, TSLA.같은 케이스는 변환 필요없음)
+
