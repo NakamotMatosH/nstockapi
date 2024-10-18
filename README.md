@@ -1,8 +1,8 @@
 # Custom Stock Analysis Project / 사용자 맞춤형 주식 분석 프로젝트
 
-Welcome to my custom stock analysis project! While existing tools like `finterest`, `finterstella`, or `yfinance` offer various stock analysis options, I prefer to build my own strategy from the ground up. This project is about creating simple and understandable models that fit my needs, particularly for short-term swing trading.
+Welcome to my custom stock analysis project! While existing tools like `*****rest`, `f*****rstella`, or `y****ance` offer various stock analysis options, I prefer to build my own strategy from the ground up. This project is about creating simple and understandable models that fit my needs, particularly for short-term swing trading.
 
-기존의 `finterest`, `finterstella`, `yfinance`와 같은 도구들이 다양한 주식 분석 기능을 제공하지만, 저는 기초부터 차근차근 나만의 전략을 구축하는 것을 선호합니다. 이 프로젝트는 특히 단기 스윙 투자를 위한 간단하고 이해하기 쉬운 모델을 만드는 것에 중점을 둡니다.
+기존의 `*****rest`, `f*****rstella`, `y****ance` 와 같은 도구들이 다양한 주식 분석 기능을 제공하지만, 저는 기초부터 차근차근 나만의 전략을 구축하는 것을 선호합니다. 이 프로젝트는 특히 단기 스윙 투자를 위한 간단하고 이해하기 쉬운 모델을 만드는 것에 중점을 둡니다.
 
 The goal here is not just to replicate existing solutions, but to develop a unique approach that is easy to understand and aligns with my trading style. Throughout this journey, I plan to explore experimental ideas—such as using neural network models for stock price predictions and combining conventional trading strategies with these models. I aim to leverage reinforcement learning to enhance the accuracy of these models, ultimately creating something practical for short-term trading.
 
