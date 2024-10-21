@@ -1,0 +1,17 @@
+
+#모델 결합 방법
+
+  func Signalfrom_combineModel( *chartData,  **modeldict )
+       
+      {  [ model : modelfunc(), gravity : float32gravity, isInverted : False(default ],
+         [ model : modelfunc(), gravity : float32gravity, isInverted : False(default ],
+         ...
+ 
+        }
+    개별 모델 계산 결과 시그널에 inverted 옵션을 적용해서 true이면 1->0,  0->1로 계산
+    계산된 결과에 전체 가중치 가중합중 비율 재계산 후 가중치 산출하여 리턴
+   가중합 계산   
+   결합된 모델에서 가중치를 곱하여 계산 후 0.5 이상이면 true, 0.5 미만이면 false로 리턴
+
+
+
