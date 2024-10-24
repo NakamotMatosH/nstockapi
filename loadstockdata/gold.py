@@ -54,9 +54,9 @@ def create_gold_dataframe(data):
     # 선형 보간법을 사용하여 누락된 값을 보간
     for column in ['closePrice', 'highPrice', 'lowPrice', 'openPrice']:
         valid_idx = df[column].dropna().index
-        interp_func = interp1d(valid_idx.astype(np.int64), df.loc[valid_idx, column], kind='linear', fill_value='extrapolate')
+        interp_func = interp1d(valid_idx.astype(np.int64) // 10**9, df.loc[valid_idx, column], kind='linear', fill_value='extrapolate')
         missing_idx = df[column].index[df[column].isna()]
-        df.loc[missing_idx, column] = interp_func(missing_idx.astype(np.int64))
+        df.loc[missing_idx, column] = interp_func(missing_idx.astype(np.int64) // 10**9)
 
     # localDate 컬럼 추가 (YYYYMMDD 형식)
     df['localDate'] = df.index.strftime('%Y%m%d')
@@ -90,9 +90,9 @@ def combine_gold_data(start_date, end_date):
     yf_df = yf.download("GC=F", start=start_dt, end=end_dt)
     yf_df = yf_df[['Open', 'High', 'Low', 'Close']]
 
-    # 날짜 인덱스 설정
-    yf_df.index = pd.to_datetime(yf_df.index)
-    naver_df.index = pd.to_datetime(naver_df.index)
+    # 날짜 인덱스 설정 (tz-naive로 변환)
+    yf_df.index = pd.to_datetime(yf_df.index).tz_localize(None)
+    naver_df.index = pd.to_datetime(naver_df.index).tz_localize(None)
 
     # yfinance 데이터와 네이버 데이터 결합
     combined_df = pd.concat([yf_df, naver_df]).sort_index()
