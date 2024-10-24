@@ -52,11 +52,7 @@ def create_gold_dataframe(data):
     df = df.reindex(full_date_range)
 
     # 선형 보간법을 사용하여 누락된 값을 보간
-    for column in ['closePrice', 'highPrice', 'lowPrice', 'openPrice']:
-        valid_idx = df[column].dropna().index
-        interp_func = interp1d(valid_idx.astype(np.int64) // 10**9, df.loc[valid_idx, column], kind='linear', fill_value='extrapolate')
-        missing_idx = df[column].index[df[column].isna()]
-        df.loc[missing_idx, column] = interp_func(missing_idx.astype(np.int64) // 10**9)
+    df.interpolate(method='linear', inplace=True)
 
     # localDate 컬럼 추가 (YYYYMMDD 형식)
     df['localDate'] = df.index.strftime('%Y%m%d')
@@ -95,14 +91,13 @@ def combine_gold_data(start_date, end_date):
     naver_df.index = pd.to_datetime(naver_df.index).tz_localize(None)
 
     # yfinance 데이터와 네이버 데이터 결합
-    combined_df = pd.concat([yf_df, naver_df]).sort_index()
+    combined_df = pd.concat([yf_df, naver_df], axis=0).sort_index()
 
     # 중복된 날짜가 있을 경우 네이버 데이터를 우선 사용
-    combined_df = combined_df[~combined_df.index.duplicated(keep='last')]
+    combined_df = combined_df.loc[~combined_df.index.duplicated(keep='first')]
 
     # 누락된 값 보간 (선형 보간법 사용)
-    combined_df = combined_df.infer_objects(copy=False)  # 객체 타입을 적절한 타입으로 변환
-    combined_df = combined_df.interpolate(method='linear', axis=0)  # 보간 실행
+    combined_df.interpolate(method='linear', inplace=True)
 
     # 조회 기간에 맞게 필터링
     combined_df = combined_df[(combined_df.index >= start_dt) & (combined_df.index <= end_dt)]
