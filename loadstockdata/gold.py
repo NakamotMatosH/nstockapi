@@ -99,6 +99,15 @@ def combine_gold_data(start_date, end_date):
     # 누락된 값 보간 (선형 보간법 사용)
     combined_df.interpolate(method='linear', inplace=True)
 
+    # NaN 값을 가진 열을 업데이트: GC=F 데이터를 NaN 열에 할당
+    for col in ['Open', 'High', 'Low', 'Close']:
+        gc_col = (col, 'GC=F')
+        if gc_col in combined_df.columns:
+            combined_df[col].fillna(combined_df[gc_col], inplace=True)
+    
+    # GC=F 관련 컬럼 제거
+    combined_df = combined_df.loc[:, ~combined_df.columns.to_series().astype(str).str.contains('GC=F')]
+
     # 조회 기간에 맞게 필터링
     combined_df = combined_df[(combined_df.index >= start_dt) & (combined_df.index <= end_dt)]
 
