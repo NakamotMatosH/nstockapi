@@ -15,7 +15,7 @@ compute.py
 
 
 exchange
- >> 금 은 코인가격
+ >> 금 은 코인가격 -> dataFrame
  
  
  
