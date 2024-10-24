@@ -108,6 +108,9 @@ def combine_gold_data(start_date, end_date):
     # GC=F 관련 컬럼 제거
     combined_df = combined_df.loc[:, ~combined_df.columns.to_series().astype(str).str.contains('GC=F')]
 
+    # 소수점 아래 2자리로 자르기
+    combined_df = combined_df.round(2)
+
     # 조회 기간에 맞게 필터링
     combined_df = combined_df[(combined_df.index >= start_dt) & (combined_df.index <= end_dt)]
 
