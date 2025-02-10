@@ -1,20 +1,106 @@
-# Custom Stock Analysis Project / 사용자 맞춤형 주식 분석 프로젝트
 
-Welcome to my custom stock analysis project! While existing tools like `*****rest`, `f*****rstella`, or `y****ance` offer various stock analysis options, I prefer to build my own strategy from the ground up. This project is about creating simple and understandable models that fit my needs, particularly for short-term swing trading.
+# Custom Stock Analysis Project
 
-기존의 `*****rest`, `f*****rstella`, `y****ance` 와 같은 도구들이 다양한 주식 분석 기능을 제공하지만, 저는 기초부터 차근차근 나만의 전략을 구축하는 것을 선호합니다. 이 프로젝트는 특히 단기 스윙 투자를 위한 간단하고 이해하기 쉬운 모델을 만드는 것에 중점을 둡니다.
+## 프로젝트 개요
+이 프로젝트는 사용자 맞춤형 주식 분석과 트레이딩 전략 검증을 위해 설계되었습니다. 주식 데이터를 외부 API에서 수집하고, 이를 기반으로 다양한 분석 및 실시간 메시지 알림을 제공합니다.
 
-The goal here is not just to replicate existing solutions, but to develop a unique approach that is easy to understand and aligns with my trading style. Throughout this journey, I plan to explore experimental ideas—such as using neural network models for stock price predictions and combining conventional trading strategies with these models. I aim to leverage reinforcement learning to enhance the accuracy of these models, ultimately creating something practical for short-term trading.
+---
 
-이 프로젝트의 목표는 단순히 기존 솔루션을 복제하는 것이 아니라, 제 투자 스타일에 맞고 이해하기 쉬운 고유한 접근 방식을 개발하는 것입니다. 이 과정에서 주가 예측을 위한 신경망 모델 사용, 전통적인 투자 전략과 신경망 모델의 결합 같은 실험적인 아이디어를 탐구할 계획입니다. 또한, 이러한 모델의 정확성을 높이기 위해 강화 학습을 활용하여 단기 투자에 실질적인 도움이 되는 무언가를 만들고자 합니다.
+## 주요 모듈 및 함수 설명
 
-One idea for incorporating reinforcement learning is to use the predictions from a neural network model as the input environment for an agent. The agent will then learn to make decisions—such as buying, selling, or holding—based on these predictions, with the goal of maximizing cumulative profit. The agent's performance can be improved through trial and error, using reward signals based on the profitability of each action. By combining reinforcement learning with traditional trading strategies and neural predictions, I hope to create a model that continuously adapts and improves in response to market conditions, ultimately finding an effective trading strategy.
+### 1. `import_sqlite3.py`
+SQLite 데이터베이스 초기화 및 기본 데이터 관리 모듈입니다.
 
-강화 학습을 도입하는 한 가지 아이디어는 신경망 모델의 예측 결과를 에이전트의 입력 환경으로 사용하는 것입니다. 에이전트는 이러한 예측을 바탕으로 매수, 매도, 또는 보유와 같은 결정을 내리며, 궁극적으로 누적 수익을 극대화하는 것을 목표로 학습합니다. 에이전트의 성능은 각 행동의 수익성에 기반한 보상 신호를 통해 시행착오 과정을 거치며 향상될 수 있습니다. 전통적인 투자 전략과 신경망 예측을 강화 학습과 결합함으로써 시장 상황에 맞추어 지속적으로 적응하고 개선되는 효과적인 투자 전략을 만들어내고자 합니다.
+### 2. `loadstockdata` (주식 데이터 로드 및 연산 모듈)
+#### 주요 파일 설명
+- **`compute.py`**
+  - `compute_rsi(dataframe, price_column='closePrice', period=14)`: **RSI(상대강도지수) 계산 함수**  
+    입력된 데이터프레임에서 특정 열을 기준으로 RSI 값을 계산합니다.  
+  - `compute_moving_average(dataframe, price_column='closePrice', period=20)`: **이동 평균 계산 함수**  
+    주식 가격의 이동 평균을 계산합니다.
 
-If you're interested in exploring these experimental approaches or want to see how I piece together different strategies, feel free to follow along and use the project for your own purposes. I'm always open to constructive feedback, so don't hesitate to share your thoughts or suggestions.
+- **`prices.py`**
+  - `retrieve_stock_data(symbol, start_date=None, end_date=None)`: **네이버 API를 이용해 주식 데이터 가져오기**  
+    특정 주식의 데이터를 네이버 API에서 수집하며, 실패 시 최대 3번까지 재시도합니다.  
+  - `save_to_database(data, table_name)`: **수집된 데이터를 SQLite 데이터베이스에 저장**  
 
-이러한 실험적인 접근 방식에 관심이 있거나, 제가 어떻게 다양한 전략을 조합하는지 보고 싶다면 자유롭게 이 프로젝트를 따라오시고, 필요에 따라 활용하셔도 좋습니다. 언제나 건설적인 피드백을 환영하니, 의견이나 제안이 있다면 주저하지 말고 공유해주세요.
+---
 
-Let's build, experiment, and discover effective trading strategies together!
-함께 구축하고, 실험하며, 효과적인 투자 전략을 발견해봅시다!
+### 3. `messageSVC` (실시간 메시지 서비스)
+텔레그램 API를 사용해 특정 이벤트 발생 시 사용자에게 알림 메시지를 보냅니다.  
+#### 주요 파일 설명
+- **`telegram.py`**
+  - `send_message_telegram(token, chat_id, text)`: **텔레그램 메시지 전송 함수**  
+    - **Parameters**  
+      - `token`: 텔레그램 봇 토큰  
+      - `chat_id`: 메시지를 보낼 채널 또는 사용자 ID  
+      - `text`: 전송할 메시지 내용  
+
+---
+
+### 4. `tradingmodel` (트레이딩 전략 테스트)
+트레이딩 전략을 설계하고 과거 데이터를 기반으로 시뮬레이션합니다.  
+- `idea.txt`: 새로운 전략 아이디어 기록  
+- `todo.txt`: 향후 추가할 기능 목록  
+
+---
+
+## 향후 개선 및 추가할 기능
+
+### 1. 데이터 수집 및 확장
+- **다양한 데이터 소스 통합**: Yahoo Finance, Alpha Vantage, Quandl 등의 데이터 소스 통합  
+- **암호화폐 및 원자재 데이터 추가**: 비트코인, 이더리움, 원유, 금 데이터 추가  
+- **실시간 데이터 스트리밍 기능**: WebSocket을 이용한 실시간 가격 변동 수집  
+
+### 2. 트레이딩 모델 개선
+- **머신러닝 기반 전략**: Scikit-learn과 TensorFlow를 이용해 예측 모델 구축  
+  - LSTM 시계열 예측  
+  - 랜덤 포레스트 및 XGBoost 기반 예측 모델  
+- **전략 백테스팅 시스템 구축**: 성능 지표 자동 계산 및 시뮬레이션 기능 추가  
+
+### 3. 사용자 인터페이스 강화
+- **웹 기반 대시보드**: Flask 또는 Streamlit을 이용한 실시간 데이터 시각화  
+- **보고서 자동 생성 기능**: PDF로 주간/월간 거래 요약 보고서 생성  
+
+### 4. 알림 시스템 확장
+- **SMS, 이메일, 슬랙 알림 추가**  
+- **조건부 알림 설정** (예: RSI가 30 이하일 때 알림)  
+
+### 5. 최적화 및 자동화
+- **데이터베이스 최적화**: PostgreSQL로 전환 고려  
+- **트레이딩 자동화**: 조건 충족 시 매수/매도 주문 자동 실행  
+
+---
+
+## 설치 및 실행 방법
+1. Python 3.x 설치  
+2. 필수 패키지 설치 (`pandas`, `requests`, `sqlite3` 등)  
+3. `import_sqlite3.py` 실행으로 데이터베이스 초기화  
+   ```bash
+   python import_sqlite3.py
+   ```
+
+---
+
+## 사용 예제
+```python
+from loadstockdata.compute import compute_rsi
+import pandas as pd
+
+# 예제 데이터 생성
+data = {'closePrice': [100, 102, 101, 105, 107, 110, 108, 109, 112, 115]}
+df = pd.DataFrame(data)
+
+# RSI 계산
+rsi = compute_rsi(df)
+print(rsi)
+```
+
+---
+
+## 향후 개선 사항
+- **시각화 기능 추가**: Matplotlib을 이용한 주식 데이터 시각화  
+- **추가 트레이딩 모델 구현**: 머신러닝 기반 모델 추가  
+- **다양한 알림 채널 확장**  
+
+---
